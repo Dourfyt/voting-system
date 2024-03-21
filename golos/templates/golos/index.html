@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <meta charset="UTF-8">
+    <title>Система дистанционного голосования</title>
+</head>
+<body>
+<h1>Выборы президента РФ 2024</h1>
+<h3>Выберите кандидата</h3>
+{% if user.is_authenticated %}
+    {% if user.is_voted == False %}
+        <div class="voting">
+            <form action="{% url 'golos:index' %}" method="post">
+                {% csrf_token %}
+                {% for candidat in candidats %}
+                    <div><input type="radio" name="candidat"
+                                value="{{ candidat.id }}">{{ candidat.last_name }} {{ candidat.name }} {{ candidat.otchestvo }}
+                    </div><br>
+                {% endfor %}
+                <input type="submit" value="Проголосовать">
+            </form>
+        </div>
+    {% elif user.is_voted == 1 %}
+        <div class="voting"><p>Вы успешно проголосовали!</p></div>
+    {% endif %}
+        <div class="logout"><a href="{% url 'golos:logout' %}">Выйти</a></div>
+{% elif user.is_authenticated != True %}
+    <div class="voting"><a href="http://127.0.0.1:8000/login/"> Вы не авторизованы</a></div>
+{% endif %}
+</body>
+</html>

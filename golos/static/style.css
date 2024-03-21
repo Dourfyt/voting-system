@@ -1,0 +1,20 @@
+body{
+    font-family: "Calibri Light", serif;
+    background: rgb(255,255,255);
+    background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(254,194,194,1) 35%, rgba(255,252,147,1) 100%);
+}
+
+.voting, .logout{
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+    font-size: larger;
+
+}
+h1, h3{
+    text-align: center;
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+
+}
