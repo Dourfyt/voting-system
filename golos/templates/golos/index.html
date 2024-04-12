@@ -59,17 +59,51 @@
                 <li><a class="nav-link scrollto" href="#contact">Контакты</a></li>
             </ul>
             <i class="bi bi-list mobile-nav-toggle"></i>
-
         </nav><!-- .navbar -->
+
         {% if user.is_anonymous == True %}
-            <a href="{% url 'golos:login' %}" class="get-started-btn scrollto">Войти</a>
+            <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#LoginBut">
+                Войти
+            </button>
         {% else %}
-            <a href="{% url 'golos:logout' %}" class="get-started-btn scrollto">Выйти</a>
+            <a href="{% url 'golos:logout' %}" class="btn btn-outline-warning">Выйти</a>
         {% endif %}
 
 
     </div>
 </header><!-- End Header -->
+<div class="modal fade" id="LoginBut" tabindex="-1" aria-labelledby="LoginButLabel" aria-hidden="true"
+     data-bs-theme="dark">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="LoginButLabel">Авторизация</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <form action="{% url 'golos:login' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3 row">
+                        <label for="{{ form.username.id_for_label }}" id="pochta"
+                               class="col-sm-2 col-form-label">Почта</label>
+                        <div class="col-sm-10">
+                            {{ form.username }}
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="{{ form.password.id_for_label }}" id="parolauth" class="col-sm-2 col-form-label">Пароль</label>
+                        <div class="col-sm-10">
+                            {{ form.password }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning">Войти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- ======= Hero Section ======= -->
 <section id="hero" class="d-flex align-items-center justify-content-center">
@@ -79,8 +113,9 @@
             <div class="col-xl-6 col-lg-8">
                 <h1>Дистанционное электронное голосование<span>.</span></h1>
                 <h2>Выбери своего кандидата!</h2><br>
-                <a href="{% if user.is_authenticated %}#team{% else %} {% url 'golos:login' %}{% endif %}"
-                   class="btn btn-outline-warning">Проголосовать</a>
+                <a href="{% if user.is_authenticated %}#team{% else %} #{% endif %}"
+                   class="btn btn-outline-warning" {% if user.is_anonymous %} data-bs-toggle="modal"
+                   data-bs-target="#LoginBut" {% endif %}>Проголосовать</a>
             </div>
         </div>
 
@@ -149,13 +184,15 @@
 
 
 
+
+
                                         {% if candidat.img %}{{ candidat.photo_big.url }}{% else %}{% static "img/anonymous.png" %}{% endif %}"
                                      class="testimonial-img" alt="">
                                 <h3>{{ candidat.name }} {{ candidat.last_name }}</h3>
                                 <h4>Должность</h4>
                                 <p>
                                     <i class="bx bxs-quote-alt-left quote-icon-left"></i>
-                                    Длинное описание
+                                    {{ candidat.long_desc }}
                                     <i class="bx bxs-quote-alt-right quote-icon-right"></i>
                                 </p>
                             </div>
@@ -178,26 +215,47 @@
                         <h2>Кандидаты</h2>
                         <p>Выберите своего президента</p>
                     </div>
-                    <form action='' method="post">
-                    <div class="row">
-                        {% for candidat in candidats %}
-                            <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                                <div class="member" data-aos="fade-up" data-aos-delay="100">
-                                    <div class="member-img">
-                                    <input type="image" name="submit" src="{% if candidat.img %}{{ candidat.photo_big.url }}{% else %}{% static '/img/anonymous.png' %}{% endif %}"
-                                             class="img-fluid" alt="">
-                                    </div>
-                                    <div class="member-info">
-                                        <h4>{{ candidat.last_name }} {{ candidat.name }}</h4>
+                        <div class="row">
+                            {% for candidat in candidats %}
 
-                                        <span>Краткое описание</span>
-                                        <button type="submit" class="btn btn-outline-warning">Проголосовать</button>
+                                <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
+                                    <div class="member" data-aos="fade-up" data-aos-delay="100">
+                                        <div class="member-img">
+                                            <img src="
+
+                                                    {% if candidat.img %}{{ candidat.photo_big.url }}{% else %}{% static '/img/anonymous.png' %}{% endif %}"
+                                                 class="img-fluid" alt="">
+                                        </div>
+                                        <div class="member-info">
+                                            <h4>{{ candidat.last_name }} {{ candidat.name }}</h4>
+
+                                            <span>{{ candidat.short_desc }}</span><br>
+                                            <div class="button-vote"><button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#confirm_{{ candidat.id }}">Проголосовать</button></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </form>
+                                <!-- Modal -->
+<div class="modal fade" id="confirm_{{ candidat.id }}" tabindex="-1" aria-labelledby="confirm_{{ candidat.id }}Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirm_{{ candidat.id }}Label">Вы уверены в своем выборе?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <form action="{% url "golos:index"%}" method="post">
+            {% csrf_token %}
+            <input class="form-check-input" id="candidat_confirm" autocomplete="off" type="hidden" name="candidat" value="{{ candidat.id }}">
+      <div class="modal-footer">
+        <button id="confirm_vote" type="submit" class="btn btn-primary button-vote">Подтвердить выбор</button>
+      </div>
+        </form>
+
+    </div>
+  </div>
+</div>
+                            {% endfor %}
+                        </div>
+                    </form>
                 </div>
             </section><!-- End Team Section -->
         {% elif user.is_voted == 1 %}
@@ -211,9 +269,9 @@
 
                     <div class="row">
 
-                        <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                            <div class="member" data-aos="fade-up" data-aos-delay="100">
-                                <span>Вы успешно проголосовали!</span>
+                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                            <div data-aos="fade-up" data-aos-delay="100">
+                                <h3>Вы успешно проголосовали!</h3>
                             </div>
                         </div>
 
@@ -315,7 +373,7 @@
                         <h3>ДЭГ<span>.</span></h3>
                         <p>
                             Большой Черкасский пер., д. 9 <br>
-                            г. Москва 109012, USA<br><br>
+                            г. Москва 109012, Россия<br><br>
                             <strong>Телефон:</strong> 8 (800) 200-00-20<br>
                             <strong>Почта:</strong> cik@mail.ru<br>
                         </p>
@@ -366,9 +424,15 @@
 </footer><!-- End Footer -->
 
 <div id="preloader"></div>
+
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
         class="bi bi-arrow-up-short"></i></a>
-
+{% if result %}
+<div class="alert alert-danger alert-dismissible fade show col-3" role="alert">
+            <strong>Введены неверные данные</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+        </div>
+{% endif %}
 <!-- Vendor JS Files -->
 <script src="{% static '/vendor/purecounter/purecounter_vanilla.js' %}"></script>
 <script src="{% static '/vendor/aos/aos.js' %}"></script>

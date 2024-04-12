@@ -5,10 +5,10 @@ from golos.models import UserD
 
 class UserAuth(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
-        'class': "form-control py-4", 'placeholder': "номер телефона"
+        'class': "form-control", 'placeholder': "example@example.com"
     }))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
-        'class': "form-control py-4", 'placeholder': "пароль"
+        'class': "form-control",
     }))
     class Meta:
         model = UserD

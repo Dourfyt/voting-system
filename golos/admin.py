@@ -4,7 +4,7 @@ from golos.models import Candidat,UserD
 
 @admin.register(Candidat)
 class CandidatAdmin(admin.ModelAdmin):
-    list_display = ('name','last_name','otchestvo','votes')
+    list_display = ('name','last_name','middle_name','votes')
     readonly_fields = ('votes',)
 
 @admin.register(UserD)

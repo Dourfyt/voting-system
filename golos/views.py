@@ -1,20 +1,24 @@
 from django.shortcuts import render,HttpResponseRedirect,reverse
-from django.contrib import auth
+from django.contrib import auth, messages
 # Create your views here.
 from golos.form import UserAuth
 from golos.models import Candidat
 
 def index(request):
     if request.POST:
-        if request.user.is_voted != True:
-            vote_id = request.POST['candidat']
-            candidat = Candidat.objects.filter(id = vote_id).last()
-            candidat.votes += 1
-            candidat.save()
-            request.user.is_voted = True
-            request.user.save()
+        if request.user.is_anonymous == False:
+            if request.user.is_voted != True:
+                vote_id = request.POST['candidat']
+                candidat = Candidat.objects.filter(id = vote_id).last()
+                candidat.votes += 1
+                candidat.save()
+                request.user.is_voted = True
+                request.user.save()
+
+    form = UserAuth()
 
     context = {
+        "form" : form,
         "user" : request.user,
         "candidats" : Candidat.objects.all()
         }
@@ -30,12 +34,16 @@ def login(request):
             if user:
                 auth.login(request, user)
                 return HttpResponseRedirect(reverse('golos:index'))
+            else:
+                result = False
+
     else:
         form = UserAuth()
+    result = True
     context = {'form': form,
                "user" : request.user,
-               'title': "Авторизация в СДГ"}
-    return render(request, "golos/login.html", context)
+               'result': result}
+    return render(request, "golos/index.html", context)
 
 def logout_user(request):
     auth.logout(request)

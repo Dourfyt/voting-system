@@ -11,9 +11,12 @@ class UserD(AbstractUser):
 
 
 class Candidat(models.Model):
-    name = models.CharField(max_length=40)
-    last_name = models.CharField(max_length=40)
-    otchestvo = models.CharField(max_length=40)
+    name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=20)
+    middle_name = models.CharField(max_length=20, null=True, blank=True)
+    long_desc = models.CharField(max_length=300, null=True, blank=True)
+    short_desc = models.CharField(max_length=40, null=True, blank=True)
+    position = models.CharField(max_length=40, null=True, blank=True)
     votes = models.PositiveIntegerField(default=0)
     img = models.ImageField(upload_to='candidats/', null=True, blank=True)
     photo_big = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1),
