@@ -1,0 +1,32 @@
+<div class="modal fade" id="LoginBut" tabindex="-1" aria-labelledby="LoginButLabel" aria-hidden="true"
+     data-bs-theme="dark">
+    <div class="modal-dialog d-flex justify-content-center">
+        <div class="modal-content w-75">
+            <div class="modal-header">
+                <h5 class="modal-title" id="LoginButLabel">Авторизация</h5>
+                <button type="button" class="btn-close" data-mdb-button-init data-mdb-ripple-init data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <form action="{% url 'golos:login' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body p-4">
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <label for="{{ form.username.id_for_label }}" id="pochta"
+                               class="col-sm-2 col-form-label">Почта</label>
+                        <div class="col-sm-10">
+                            {{ form.username }}
+                        </div>
+                    </div>
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <label for="{{ form.password.id_for_label }}" id="parolauth" class="col-sm-2 col-form-label">Пароль</label>
+                        <div class="col-sm-10">
+                            {{ form.password }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning btn-block">Войти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
